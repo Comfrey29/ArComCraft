@@ -1,6 +1,7 @@
-// src/world.h
-#ifndef WORLD_H
-#define WORLD_H
-void World_Init(void);
-void World_Update(void);
-#endif
+#include "world.h"
+
+// Inicialitza el món (de moment no fa res)
+void World_Init(void) {}
+
+// Actualitza el món (de moment no fa res)
+void World_Update(void) {}
