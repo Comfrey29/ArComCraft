@@ -1,65 +1,36 @@
 #include "gfx3d.h"
-#include <stdio.h>
+#include <GL/glu.h>
 
-static SDL_Window* window = NULL;
-static SDL_GLContext glContext;
-
-bool GFX3D_Init(int width, int height) {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        printf("SDL_Init Error: %s\n", SDL_GetError());
-        return false;
-    }
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    window = SDL_CreateWindow("ArCom Creative+ 3D",
-                              SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                              width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-    if (!window) {
-        printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return false;
-    }
-
-    glContext = SDL_GL_CreateContext(window);
-    if (!glContext) {
-        printf("SDL_GL_CreateContext Error: %s\n", SDL_GetError());
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return false;
-    }
-
-    glEnable(GL_DEPTH_TEST);
+void Gfx_Init(int width, int height) {
     glViewport(0, 0, width, height);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
+    glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(70.0, (float)width / height, 0.1, 100.0);
+    gluPerspective(70.0, (float)width/height, 0.1, 100.0);
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    return true;
 }
 
-void GFX3D_Shutdown(void) {
-    SDL_GL_DeleteContext(glContext);
-    if (window) SDL_DestroyWindow(window);
-    SDL_Quit();
-}
+void Gfx_DrawCube(float x, float y, float z, GLuint texture,
+                  float u1, float v1, float u2, float v2) {
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glPushMatrix();
+    glTranslatef(x, y, z);
 
-void GFX3D_Clear(void) {
-    glClearColor(0.5f, 0.7f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
+    glBegin(GL_QUADS);
+    // Front
+    glTexCoord2f(u1, v2); glVertex3f(-0.5, -0.5, 0.5);
+    glTexCoord2f(u2, v2); glVertex3f(0.5, -0.5, 0.5);
+    glTexCoord2f(u2, v1); glVertex3f(0.5, 0.5, 0.5);
+    glTexCoord2f(u1, v1); glVertex3f(-0.5, 0.5, 0.5);
+    // Back
+    glTexCoord2f(u1, v2); glVertex3f(-0.5, -0.5, -0.5);
+    glTexCoord2f(u2, v2); glVertex3f(0.5, -0.5, -0.5);
+    glTexCoord2f(u2, v1); glVertex3f(0.5, 0.5, -0.5);
+    glTexCoord2f(u1, v1); glVertex3f(-0.5, 0.5, -0.5);
+    // Other sides...
+    glEnd();
 
-void GFX3D_Present(void) {
-    SDL_GL_SwapWindow(window);
-}
-
-void GFX3D_SetCamera(float x, float y, float z, float pitch, float yaw) {
-    glLoadIdentity();
-    glRotatef(pitch, 1, 0, 0);
-    glRotatef(yaw, 0, 1, 0);
-    glTranslatef(-x, -y, -z);
+    glPopMatrix();
 }
