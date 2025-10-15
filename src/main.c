@@ -3,6 +3,7 @@
 #include "gfx3d.h"
 #include "input.h"
 #include "texture.h"
+#include <GL/glu.h>
 
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
