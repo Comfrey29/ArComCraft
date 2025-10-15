@@ -1,11 +1,10 @@
 #include "input.h"
 
 void Input_Init(void) {
-    SDL_SetRelativeMouseMode(SDL_TRUE); // Captura el ratolí dins la finestra
+    SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
 void Input_Update(InputState* input) {
-    // Reiniciar moviment per frame
     input->forward = input->backward = false;
     input->left = input->right = false;
     input->up = input->down = false;
@@ -37,3 +36,4 @@ void Input_HandleEvent(InputState* input, SDL_Event* event) {
             break;
     }
 }
+
